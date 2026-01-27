@@ -14,9 +14,13 @@ int main(int argc, char** argv){
 	std::cout << std::endl;
 	
 	std::string user_input;
-	int i = 1;
+	int i = 1; // indicates if game is running
 	int money = 100;
+	// dealerPoints = 0
+	// playerPoints = 0
+
 	// Game play loop. If player types quit loop exits.
+	// deal 2 cards to dealer, deal 2 cards to player
 	do {
 		std::cin >> user_input;
 		std::cout << "Your input: " << user_input << std::endl;
@@ -33,14 +37,17 @@ int main(int argc, char** argv){
 		
 		// take another card
 		if (user_input == "hit") {
+			// print the card at the top of the Shuffled Deck stack and store the points via card.number
 		}
 		
 		// keep your hand
 		if (user_input == "stand") {
+			//reveal dealer's points, compare who is closer to 21
 		}
 		
 		// double bet, take one more card
 		if (user_input == "double down") {
+			// return 2 cards at the top of the Shuffled Deck stack and store the points
 		}
 
 	} while (i != 0);

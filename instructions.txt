@@ -50,4 +50,6 @@ Criteria
 Extra Credit
 
 
-For those that are looking for a bit of an extra challenge, read the documentation on Miniaudio.  Figure out how to include it in your code and to play some simple sound effects.  Try not to use an AI assistant for this part; learning to use new libraries is a very important skill we need to develop.
+For those that are looking for a bit of an extra challenge, read the documentation on Miniaudio.  
+Figure out how to include it in your code and to play some simple sound effects.  
+Try not to use an AI assistant for this part; learning to use new libraries is a very important skill we need to develop.
