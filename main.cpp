@@ -16,12 +16,23 @@ int main(int argc, char** argv){
 	std::string user_input;
 	int i = 1; // indicates if game is running
 	int money = 100;
+
+	std::cin >> user_input;
+		std::cout << "How much would you like to bet: " << user_input << std::endl;
+		// check to make sure input is an integer, non-negative, and not greater than the current money they have
+		// store their input as betMoney
+
 	// dealerPoints = 0
 	// playerPoints = 0
 
 	// Game play loop. If player types quit loop exits.
 	// deal 2 cards to dealer, deal 2 cards to player
+	// Thinking calling Deck::shuffle(deck) at index 0, but incrementing the index each time the "pull card" function is called
 	do {
+		// check if playerPoints > 21, if so they lose and int money -= betMoney
+		// check if money == 0, if so, force quit game 
+		// check if playerPoints == 21, if so they win and int money += betMoney
+
 		std::cin >> user_input;
 		std::cout << "Your input: " << user_input << std::endl;
 		// convert user_input to lowercase
@@ -39,15 +50,21 @@ int main(int argc, char** argv){
 		if (user_input == "hit") {
 			// print the card at the top of the Shuffled Deck stack and store the points via card.number
 		}
+
+		// double bet, take one more card
+		if (user_input == "double down") {
+			// return 2 cards at the top of the Shuffled Deck stack and store the points
+		}
 		
 		// keep your hand
 		if (user_input == "stand") {
 			//reveal dealer's points, compare who is closer to 21
-		}
-		
-		// double bet, take one more card
-		if (user_input == "double down") {
-			// return 2 cards at the top of the Shuffled Deck stack and store the points
+
+			// Dealer's turn
+				// reveal "hole card"
+				// if dealerPoints < 17, make them hit
+				// if dealerPoints < playerPoints, make them hit
+			// Compare playerPoints and dealerPoints, if playerPoints < dealerPoints, player loses. if playerPoints > dealerPoints, player wins. if equal, nothing happens
 		}
 
 	} while (i != 0);
