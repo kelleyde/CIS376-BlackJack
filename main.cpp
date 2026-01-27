@@ -15,6 +15,7 @@ int main(int argc, char** argv){
 	
 	std::string user_input;
 	int i = 1;
+	int money = 100;
 	// Game play loop. If player types quit loop exits.
 	do {
 		std::cin >> user_input;
@@ -26,10 +27,22 @@ int main(int argc, char** argv){
 			*i = tolower(*i);
 		}
 
-		std::cout << "Your lower finput: " << user_input << std::endl;
 		if (user_input == "quit") {
 		i = i-1;
 		}
+		
+		// take another card
+		if (user_input == "hit") {
+		}
+		
+		// keep your hand
+		if (user_input == "stand") {
+		}
+		
+		// double bet, take one more card
+		if (user_input == "double down") {
+		}
+
 	} while (i != 0);
 
 }
