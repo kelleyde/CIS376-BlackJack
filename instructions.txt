@@ -1,0 +1,43 @@
+We talked in class about C++ and saw some sample code (attached below).  Now, it is your turn.
+
+
+This game is a trivial one - ASCII-based text only.  Your goal is to make a Blackjack game using the deck of cards class we coded in lecture.  Our simplified rules of Blackjack are:
+
+
+    Each player places a bet.
+    Each player gets 2 cards (face up).
+    Dealer gets 1 face up + 1 face down (the “hole card”).
+    Players act first, then the dealer.
+
+
+The player can then
+
+
+    Hit → take another card.
+    Stand → keep your hand.
+    Double Down → double bet, take exactly one more card.
+
+
+If your hand goes over 21, you bust and lose immediately.  Then, the dealer goes.  The dealer will flip the hole card.  Then, the dealer decides if they want to hit or stay.  If the value of their cards is 17 or less, they must hit.  If they have a lower number than the player, they must also hit.
+
+
+The player with the highest number (that doesn't go over 21) wins.  Blackjack (Ace and a 10) beats all other hands except for another Blackjack (then it's a tie).  Winner takes all the bets.  On a tie, money goes back to bettors.
+
+
+Why are we coding a game without graphics?
+
+I know everyone wants to make video games - and we are going to do that.  But first, we need to make sure we are all comfortable with C++.  This game serves that purpose.  Our next game will involve graphics (and C++!).
+
+
+Criteria
+
+    You may work with a partner on this.
+    You can ask AI questions about how something might be done in C++.  You can also ask for sample code.  But you may not ask the AI to code any significant portion of the assignment.  A significant portion is over 33% of any function or class.  You must be able to explain any lines of code in your submission.
+    You must use Object-Oriented C++ (classes and objects, no standalone functions except when necessary).
+    The game allows one person to play against the computer.
+    You start with $100.  Players should be able to choose to continue playing until they are broke, or wish to quit.
+
+
+Extra Credit
+
+For those that are looking for a bit of an extra challenge, read the documentation on Miniaudio.  Figure out how to include it in your code and to play some simple sound effects.  Try not to use an AI assistant for this part; learning to use new libraries is a very important skill we need to develop.
