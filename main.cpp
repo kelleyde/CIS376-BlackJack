@@ -1,7 +1,7 @@
 #include "deck.h"
 #include <iostream>
 
-/Card& deal(int num_cards_dealt){}
+//Card& deal(int num_cards_dealt){}
 
 int main(int argc, char** argv){
 	// Create a deck
@@ -23,7 +23,8 @@ int main(int argc, char** argv){
 	Card& first_deal = deck[0];
 	std::cout << first_deal << std::endl;
 
-	int card_num = 
+	int card_num = Card::getNumber(first_deal);
+	std::cout << card_num << std::endl;
 
 
 // 	std::cout << "How much would you like to bet: ";
