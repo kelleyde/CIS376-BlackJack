@@ -16,9 +16,9 @@ int main(int argc, char** argv){
 	// std::cout << std::endl;
 	
 	std::string user_input;
-	int betMoney;
+	int betMoney; // amount of money user would like to bet
 	int i = 1; // indicates if game is running
-	int money = 100;
+	int money = 100; // amount of money user has in game
 
 	Card& first_deal = deck[0];
 	std::cout << first_deal << std::endl;
