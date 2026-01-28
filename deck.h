@@ -42,7 +42,7 @@ class Card {
 		
 		// Getter
 		Suit getSuit();
-		int getNumber();
+		static int getNumber(Card& card);
 
 		// I want the Deck class to be able to access the Card data without
 		// needing the getters.  I'm going to make it a friend class so that

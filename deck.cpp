@@ -73,3 +73,7 @@ std::vector<Card>::iterator Deck::begin(){
 std::vector<Card>::iterator Deck::end(){
 	return cards.end();
 }
+
+int Card::getNumber(Card& card){
+	return card.number;
+}
