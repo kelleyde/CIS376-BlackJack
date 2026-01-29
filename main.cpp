@@ -58,6 +58,8 @@ int main(int argc, char** argv){
 
 	// check for black jack. Points = 21 or Ace and a 10
 	if (playerPoints == 21) {
+		std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+		"\tDealer's Points" << dealerPoints << std::endl;
 		if (dealerPoints == 21) {
 			std::cout << "Double Black Jack Tie" << std::endl;
 		}
@@ -69,6 +71,8 @@ int main(int argc, char** argv){
 
 	if (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1) {
 		if(Card::getNumber(playerHand[0]) == 10 or Card::getNumber(playerHand[1]) == 10) {
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+			"\tDealer's Points" << dealerPoints << std::endl;
 			std::cout << "Black Jack! You Win!" << std::endl;
 			run = false;
 		}
@@ -85,8 +89,8 @@ int main(int argc, char** argv){
 		// keep your hand
 		if (user_input == "stand") {
 			//reveal dealer's points, compare who is closer to 21
-			std::cout << "Dealer's Hole Card: " << dealerHand[1] << std::endl;
-			std::cout << "Dealer's Points: " << dealerPoints << std::endl;
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+			"\tDealer's Points: " << dealerPoints << std::endl;
 
 			// dealer game loop
 			while(true){
