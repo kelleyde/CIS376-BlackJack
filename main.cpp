@@ -78,9 +78,6 @@ int main(int argc, char** argv){
 
 	// Game play loop. If player types quit, loop exits.
 	do {
-		// check if playerPoints > 21, if so they lose and int money -= betMoney
-		// check if money == 0, if so, force quit game 
-		// check if playerPoints == 21, if so they win and int money += betMoney
 		std::cout << "Your move: ";
 		// code from https://stackoverflow.com/questions/5838711/stdcin-input-with-spaces
 		// getline allows for spaces to be in the string user_input
@@ -100,8 +97,10 @@ int main(int argc, char** argv){
 			// print the card at the top of the Shuffled Deck stack and store the points 
 			// push_back adds to a vector
 			playerHand.push_back(deck[deal_num]);
+
 			// add points
 			playerPoints = playerPoints + Card::getNumber(deck[deal_num]);
+
 			// print
 			std::cout << deck[deal_num] << "\tYour Points: " << playerPoints << std::endl;
 
@@ -114,25 +113,46 @@ int main(int argc, char** argv){
 			// take a cards at the top of the deck and double bet
 			playerHand.push_back(deck[deal_num]);
 			std::cout << deck[deal_num] << std::endl;
+
 			// add to points
 			playerPoints = playerPoints + Card::getNumber(deck[deal_num]);
 			std::cout << "Your Points: " << playerPoints << std::endl;
 			
 			// deal num increment
 			deal_num ++;
+
 			// bet doubles
 			betMoney = betMoney * 2;
 			// Wondering if we should have a check to see if they can double their bet? - Lilly
 			
 			// go to stand
-			user_input = "stand";
+			user_input == "stand";
 			// std::cout << user_input << std::endl;
 		}
 		
 		if(playerPoints > 21){
 				std::cout << "You Bust" << std::endl;
-				i = i - 1;
-				break;
+
+				// lose bet money and print how much player has left
+				money -= betMoney;
+				std::cout << "You have now have "<< money <<"$" << std::endl;
+
+				// if player runs out of money, they lose and quit the game
+				if(money <= 0){
+					std::cout << "You ran out of money!" << std::endl;
+					i -= 1;
+				}
+
+				// continue playing as long as they have enough money
+				else{
+					std::cout << "Continue playing? (Y/N): " << std::endl;
+					if(std::getline(std::cin, user_input) == 'N'){
+						i -= 1;
+					}
+					else{
+						continue;
+					}
+				}
 				// insert play again statement and continue,take out i = i-1;
 			}
 
@@ -169,36 +189,68 @@ int main(int argc, char** argv){
 						std::cout << "Player Points: " << playerPoints << " < " 
 						<< "Dealer Points: " << dealerPoints << std::endl;
 						std::cout << "Dealer Wins, You Lose" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
+
+						// lose bet money and print how much player has left
+						money -= betMoney;
+						std::cout << "You have now have "<< money <<"$" << std::endl;
+
+						// if player runs out of money, they lose and quit the game
+						if(money <= 0){
+							std::cout << "You ran out of money!" << std::endl;
+							i -= 1;
+						}
+
+						// continue playing as long as they have enough money
+						else{
+							std::cout << "Continue playing? (Y/N): " << std::endl;
+							if(std::getline(std::cin, user_input) == 'N'){
+								i -= 1;
+							}
+							else{
+								continue;
+							}
+						}
 					}
 
 					if(dealerPoints < playerPoints){
 						std::cout << "Player Points: " << playerPoints << " > " 
 						<< "Dealer Points: " << dealerPoints << std::endl;
 						std::cout << "You Win, Dealer Loses" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
+						
+						// win bet money and print how much player has left
+						money += betMoney;
+						std::cout << "You have now have "<< money <<"$" << std::endl;
+
+						// Ask to continue playing 
+						std::cout << "Continue playing? (Y/N): " << std::endl;
+						if(std::getline(std::cin, user_input) == 'N'){
+							i -= 1;
+						}
+						else{
+							continue;
+						}
 					}
 
 					if(dealerPoints == playerPoints){
 						std::cout << "Player Points: " << playerPoints << " = " 
 						<< "Dealer Points: " << dealerPoints << std::endl;
 						std::cout << "Tie" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
+						
+						// no change to money and print how much player has left
+						std::cout << "You have "<< money <<"$" << std::endl;
+
+						// continue playing 
+							std::cout << "Continue playing? (Y/N): " << std::endl;
+							if(std::getline(std::cin, user_input) == 'N'){
+								i -= 1;
+							}
+							else{
+								continue;
+							}
 					}
 				}
-				
-			} // while (dealer game loop)
-		} // if (stand)
-
-		// else {
-		// 	std::cout << "Retype move: " << std::endl;
-		// }
+			} 
+		} 
 
 	} while (i != 0);
 

@@ -1,7 +1,5 @@
 /* deck.h
- * MrW 2026
  * A simple set of classes for a deck of cards.  ASCII-based images for suits.
- *
  * First - include guards to ensure we don't import code more than once.
  */
 
