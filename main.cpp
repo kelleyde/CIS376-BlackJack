@@ -48,12 +48,19 @@ int main(int argc, char** argv){
 	}
 	std::cout << "Your Points: " << playerPoints << std::endl;
 
+	// in case deal is > 21
+	if(playerPoints > 21){
+		std::cout << "You Bust" << std::endl;
+		i = i - 1;
+		// insert play again statement and continue,take out i = i-1;
+	}
+
 	for(auto i : dealerHand){
 		dealerPoints = dealerPoints + Card::getNumber(i);
 	}
 	std::cout << "Dealer's Card: " << dealerHand[0] << std::endl;
 
-	deal_num = deal_num +4;
+	deal_num = deal_num + 4;
 
 	// Game play loop. If player types quit loop exits.
 	// Thinking calling Deck::shuffle(deck) at index 0, but incrementing the index each time the "pull card" function is called
@@ -61,11 +68,12 @@ int main(int argc, char** argv){
 		// check if playerPoints > 21, if so they lose and int money -= betMoney
 		// check if money == 0, if so, force quit game 
 		// check if playerPoints == 21, if so they win and int money += betMoney
-		std::cout << "Your move: " << user_input << std::endl;
-		std::cin >> user_input;
+		std::cout << "Your move: ";
+		// code from https://stackoverflow.com/questions/5838711/stdcin-input-with-spaces
+		// getline allows for spaces to be in the string user_input
+		std::getline(std::cin, user_input);
 		// convert user_input to lowercase
-		// code from 
-		// https://stackoverflow.com/questions/26202113/how-to-make-case-sensitivity-not-matter-when-inputting-an-answer 
+		// code from https://stackoverflow.com/questions/26202113/how-to-make-case-sensitivity-not-matter-when-inputting-an-answer 
 		for (auto i = user_input.begin(); i < user_input.end(); i ++) {
 			*i = tolower(*i);
 		}
@@ -77,40 +85,105 @@ int main(int argc, char** argv){
 		// take another card
 		if (user_input == "hit") {
 			// print the card at the top of the Shuffled Deck stack and store the points 
+			// push_back adds to a vector
 			playerHand.push_back(deck[deal_num]);
-			std::cout << deck[deal_num] << std::endl;
+			// add points
 			playerPoints = playerPoints + Card::getNumber(deck[deal_num]);
-			std::cout << "Your Points: " << playerPoints << std::endl;
+			// print
+			std::cout << deck[deal_num] << "\tYour Points: " << playerPoints << std::endl;
+
 			// Go to next card
 			deal_num ++;
+		}
 
-			// check if player is over 21
-			if(playerPoints > 21){
+		// double bet, take one more card
+		if (user_input == "double down") {
+			// take a cards at the top of the deck and double bet
+			playerHand.push_back(deck[deal_num]);
+			std::cout << deck[deal_num] << std::endl;
+			// add to points
+			playerPoints = playerPoints + Card::getNumber(deck[deal_num]);
+			std::cout << "Your Points: " << playerPoints << std::endl;
+			
+			// deal num increment
+			deal_num ++;
+			// bet doubles
+			betMoney = betMoney * 2;
+			
+			// go to stand
+			user_input = "stand";
+			// std::cout << user_input << std::endl;
+		}
+		
+		if(playerPoints > 21){
 				std::cout << "You Bust" << std::endl;
 				i = i - 1;
+				break;
 				// insert play again statement and continue,take out i = i-1;
 			}
-		}
 
-		// // double bet, take one more card
-		// if (user_input == "double down") {
-		// 	// return 2 cards at the top of the Shuffled Deck stack and store the points
+		// keep your hand
+		if (user_input == "stand") {
+			//reveal dealer's points, compare who is closer to 21
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << std::endl;
+			std::cout << "Dealer's Points: " << dealerPoints << std::endl;
+
+			// dealer game loop
+			while(true){
+				// if dealer busts
+				if(dealerPoints > 21){
+					std::cout << "Dealer Bust, You Win" << std::endl;
+					// change to play again?
+					i = i - 1;
+					break;
+				}
+				// is dealerPoints < 17 or < playerPoints Dealer hit
+				if(dealerPoints < 17 or dealerPoints < playerPoints) {
+					// dealer hit
+					dealerHand.push_back(deck[deal_num]);
+					// add points
+					dealerPoints = dealerPoints + Card::getNumber(deck[deal_num]);
+					// print
+					std::cout << deck[deal_num] << "\tDealer Points:" << dealerPoints << std::endl;
+					// increment deal_num
+					deal_num ++;
+				}
+
+				else {
+					if(dealerPoints > playerPoints){
+						std::cout << "Player Points: " << playerPoints << " < " 
+						<< "Dealer Points: " << dealerPoints << std::endl;
+						std::cout << "Dealer Wins, You Lose" << std::endl;
+						// change to play again?
+						i = i - 1;
+						break;
+					}
+
+					if(dealerPoints < playerPoints){
+						std::cout << "Player Points: " << playerPoints << " > " 
+						<< "Dealer Points: " << dealerPoints << std::endl;
+						std::cout << "You Win, Dealer Loses" << std::endl;
+						// change to play again?
+						i = i - 1;
+						break;
+					}
+
+					if(dealerPoints == playerPoints){
+						std::cout << "Player Points: " << playerPoints << " = " 
+						<< "Dealer Points: " << dealerPoints << std::endl;
+						std::cout << "Tie" << std::endl;
+						// change to play again?
+						i = i - 1;
+						break;
+					}
+				}
+				
+			} // while (dealer game loop)
+		} // if (stand)
+
+		// else {
+		// 	std::cout << "Retype move: " << std::endl;
 		// }
-		
-		// // keep your hand
-		// if (user_input == "stand") {
-		// 	//reveal dealer's points, compare who is closer to 21
-
-			// Dealer's turn
-				// reveal "hole card"
-				// if dealerPoints < 17, make them hit
-				// if dealerPoints < playerPoints, make them hit
-			// Compare playerPoints and dealerPoints, if playerPoints < dealerPoints, player loses. if playerPoints > dealerPoints, player wins. if equal, nothing happens
-		// }
-
-		else {
-			std::cout << "Retype move: " << std::endl;
-		}
 
 	} while (i != 0);
 
