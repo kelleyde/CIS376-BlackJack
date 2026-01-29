@@ -7,9 +7,9 @@
 
 int main(int argc, char** argv){
 	// Create a deck
-	Deck deck;
-	// Shuffle the deck (notice the static-method call)
-	Deck::shuffle(deck);
+	// Deck deck;
+	// // Shuffle the deck (notice the static-method call)
+	// Deck::shuffle(deck);
 	// Auto keyword deduces type for us, so we don't have to.  Here
 	// it is for creating an iterator.
 	// for(auto it = deck.begin(); it != deck.end(); ++it){
@@ -18,11 +18,8 @@ int main(int argc, char** argv){
 	// std::cout << std::endl;
 	
 	std::string user_input;
-	unsigned int betMoney; // amount of money user would like to bet
 	int i = 1; // indicates if game is running
 	int money = 100; // amount of money user has in game
-	int deal_num = 0; // which card of the deck we are on
-
 	// Card& first_deal = deck[deal_num];
 	// std::cout << first_deal << std::endl;
 
@@ -36,24 +33,26 @@ int main(int argc, char** argv){
 	// std::cout << "You bet "<< betMoney <<"$" << std::endl;
 	// check to make sure input is an integer, non-negative, and not greater than the current money they have
 
+	// set up game
+	// betting 
+	unsigned int betMoney; // amount of money user would like to bet
+
+	// deck and cards setup
+	Deck deck;
+	Deck::shuffle(deck);
+	int deal_num = 0; // which card of the deck we are on
 	// Help create vectors https://www.geeksforgeeks.org/cpp/initialize-a-vector-in-cpp-different-ways/
 	std::vector<Card> playerHand = {deck[0], deck[1]};
 	std::vector<Card> dealerHand = {deck[2], deck[3]};
 	int playerPoints = 0;
 	int dealerPoints = 0;
 
+	// deal cards
 	for(auto i : playerHand){
 		playerPoints = playerPoints + Card::getNumber(i);
 		std::cout << i << std::endl;
 	}
 	std::cout << "Your Points: " << playerPoints << std::endl;
-
-	// in case deal is > 21
-	if(playerPoints > 21){
-		std::cout << "You Bust" << std::endl;
-		i = i - 1;
-		// insert play again statement and continue,take out i = i-1;
-	}
 
 	for(auto i : dealerHand){
 		dealerPoints = dealerPoints + Card::getNumber(i);
@@ -63,11 +62,75 @@ int main(int argc, char** argv){
 	deal_num = deal_num + 4;
 
 	// Game play loop. If player types quit loop exits.
-	// Thinking calling Deck::shuffle(deck) at index 0, but incrementing the index each time the "pull card" function is called
 	do {
-		// check if playerPoints > 21, if so they lose and int money -= betMoney
-		// check if money == 0, if so, force quit game 
-		// check if playerPoints == 21, if so they win and int money += betMoney
+		if(playerPoints > 21){
+				std::cout << "You Bust, You Lose" << std::endl;
+				i = i - 1;
+				break;
+				// insert play again statement and continue,take out i = i-1;
+			}
+		
+		// keep your hand
+		if (user_input == "stand") {
+			//reveal dealer's points, compare who is closer to 21
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << std::endl;
+			std::cout << "Dealer's Points: " << dealerPoints << std::endl;
+
+			// dealer game loop
+			while(true){
+
+				// break if dealer points > 17 and dealer points > player points.
+				if(dealerPoints > 17 and dealerPoints > playerPoints) {
+					break;
+				}
+
+				// dealer hit
+				dealerHand.push_back(deck[deal_num]);
+				// add points
+				dealerPoints = dealerPoints + Card::getNumber(deck[deal_num]);
+				// print
+				std::cout << deck[deal_num] << "\tDealer Points:" << dealerPoints << std::endl;
+				// increment deal_num
+				deal_num ++;
+					
+				} // while dealer game loop
+			
+			// if dealer busts
+			if(dealerPoints > 21){
+				std::cout << "Dealer Bust, You Win" << std::endl;
+				// change to play again?
+				i = i - 1;
+				break;
+			}
+				
+			if(dealerPoints > playerPoints){
+				std::cout << "Player Points: " << playerPoints << " < " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "Dealer Wins, You Lose" << std::endl;
+				// change to play again?
+				i = i - 1;
+				break;
+			}
+
+			if(dealerPoints < playerPoints){
+				std::cout << "Player Points: " << playerPoints << " > " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "You Win, Dealer Loses" << std::endl;
+				// change to play again?
+				i = i - 1;
+				break;
+			}
+
+			if(dealerPoints == playerPoints){
+				std::cout << "Player Points: " << playerPoints << " = " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "Tie" << std::endl;
+				// change to play again?
+				i = i - 1;
+				break;
+			}
+		} // if (stand)
+
 		std::cout << "Your move: ";
 		// code from https://stackoverflow.com/questions/5838711/stdcin-input-with-spaces
 		// getline allows for spaces to be in the string user_input
@@ -114,76 +177,6 @@ int main(int argc, char** argv){
 			user_input = "stand";
 			// std::cout << user_input << std::endl;
 		}
-		
-		if(playerPoints > 21){
-				std::cout << "You Bust" << std::endl;
-				i = i - 1;
-				break;
-				// insert play again statement and continue,take out i = i-1;
-			}
-
-		// keep your hand
-		if (user_input == "stand") {
-			//reveal dealer's points, compare who is closer to 21
-			std::cout << "Dealer's Hole Card: " << dealerHand[1] << std::endl;
-			std::cout << "Dealer's Points: " << dealerPoints << std::endl;
-
-			// dealer game loop
-			while(true){
-				// if dealer busts
-				if(dealerPoints > 21){
-					std::cout << "Dealer Bust, You Win" << std::endl;
-					// change to play again?
-					i = i - 1;
-					break;
-				}
-				// is dealerPoints < 17 or < playerPoints Dealer hit
-				if(dealerPoints < 17 or dealerPoints < playerPoints) {
-					// dealer hit
-					dealerHand.push_back(deck[deal_num]);
-					// add points
-					dealerPoints = dealerPoints + Card::getNumber(deck[deal_num]);
-					// print
-					std::cout << deck[deal_num] << "\tDealer Points:" << dealerPoints << std::endl;
-					// increment deal_num
-					deal_num ++;
-				}
-
-				else {
-					if(dealerPoints > playerPoints){
-						std::cout << "Player Points: " << playerPoints << " < " 
-						<< "Dealer Points: " << dealerPoints << std::endl;
-						std::cout << "Dealer Wins, You Lose" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
-					}
-
-					if(dealerPoints < playerPoints){
-						std::cout << "Player Points: " << playerPoints << " > " 
-						<< "Dealer Points: " << dealerPoints << std::endl;
-						std::cout << "You Win, Dealer Loses" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
-					}
-
-					if(dealerPoints == playerPoints){
-						std::cout << "Player Points: " << playerPoints << " = " 
-						<< "Dealer Points: " << dealerPoints << std::endl;
-						std::cout << "Tie" << std::endl;
-						// change to play again?
-						i = i - 1;
-						break;
-					}
-				}
-				
-			} // while (dealer game loop)
-		} // if (stand)
-
-		// else {
-		// 	std::cout << "Retype move: " << std::endl;
-		// }
 
 	} while (i != 0);
 
