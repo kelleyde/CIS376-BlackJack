@@ -1,11 +1,10 @@
 #include "deck.h"
 #include <iostream>
 #include <vector>
-// using namespace std;
 
-//Card& deal(int num_cards_dealt){}
 
 int main(int argc, char** argv){
+	// Mr. W's code
 	// Create a deck
 	// Deck deck;
 	// // Shuffle the deck (notice the static-method call)
@@ -17,25 +16,19 @@ int main(int argc, char** argv){
 	// }
 	// std::cout << std::endl;
 	
-	std::string user_input;
-	int i = 1; // indicates if game is running
+	std::string user_input; // stores user input
 	int money = 100; // amount of money user has in game
-	// Card& first_deal = deck[deal_num];
-	// std::cout << first_deal << std::endl;
+	bool start;
 
-	// int card_num = Card::getNumber(first_deal);
-	// std::cout << card_num << std::endl;
-
-	// Start game
-	std::cout << "Start Game" << std::endl;
+	// outer game loop, start/restart game
+	// int start = true; 
+	do {
+	// std::cout << "Start Game" << std::endl;
 	// std::cout << "How much would you like to bet: ";
+	unsigned int betMoney; // amount of money user would like to bet
 	// std::cin >> betMoney;
 	// std::cout << "You bet "<< betMoney <<"$" << std::endl;
 	// check to make sure input is an integer, non-negative, and not greater than the current money they have
-
-	// set up game
-	// betting 
-	unsigned int betMoney; // amount of money user would like to bet
 
 	// deck and cards setup
 	Deck deck;
@@ -61,11 +54,30 @@ int main(int argc, char** argv){
 
 	deal_num = deal_num + 4;
 
+	bool run = true; // run game play loop
+
+	// check for black jack. Points = 21 or Ace and a 10
+	if (playerPoints == 21) {
+		if (dealerPoints == 21) {
+			std::cout << "Double Black Jack Tie" << std::endl;
+		}
+		else {
+			std::cout << "Black Jack! You Win!" << std::endl;
+		}
+		run = false;
+	}
+
+	if (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1) {
+		if(Card::getNumber(playerHand[0]) == 10 or Card::getNumber(playerHand[1]) == 10) {
+			std::cout << "Black Jack! You Win!" << std::endl;
+			run = false;
+		}
+	}
+	
 	// Game play loop. If player types quit loop exits.
-	do {
+	while(run) {
 		if(playerPoints > 21){
 				std::cout << "You Bust, You Lose" << std::endl;
-				i = i - 1;
 				break;
 				// insert play again statement and continue,take out i = i-1;
 			}
@@ -78,7 +90,6 @@ int main(int argc, char** argv){
 
 			// dealer game loop
 			while(true){
-
 				// break if dealer points > 17 and dealer points > player points.
 				if(dealerPoints > 17 and dealerPoints > playerPoints) {
 					break;
@@ -98,8 +109,7 @@ int main(int argc, char** argv){
 			// if dealer busts
 			if(dealerPoints > 21){
 				std::cout << "Dealer Bust, You Win" << std::endl;
-				// change to play again?
-				i = i - 1;
+				// go to play again
 				break;
 			}
 				
@@ -107,8 +117,7 @@ int main(int argc, char** argv){
 				std::cout << "Player Points: " << playerPoints << " < " 
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "Dealer Wins, You Lose" << std::endl;
-				// change to play again?
-				i = i - 1;
+				// go to play again
 				break;
 			}
 
@@ -116,8 +125,7 @@ int main(int argc, char** argv){
 				std::cout << "Player Points: " << playerPoints << " > " 
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "You Win, Dealer Loses" << std::endl;
-				// change to play again?
-				i = i - 1;
+				// go to play again
 				break;
 			}
 
@@ -125,8 +133,7 @@ int main(int argc, char** argv){
 				std::cout << "Player Points: " << playerPoints << " = " 
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "Tie" << std::endl;
-				// change to play again?
-				i = i - 1;
+				// go to play again
 				break;
 			}
 		} // if (stand)
@@ -140,14 +147,9 @@ int main(int argc, char** argv){
 		for (auto i = user_input.begin(); i < user_input.end(); i ++) {
 			*i = tolower(*i);
 		}
-
-		if (user_input == "quit") {
-			i = i-1;
-		}
 		
 		// take another card
 		if (user_input == "hit") {
-			// print the card at the top of the Shuffled Deck stack and store the points 
 			// push_back adds to a vector
 			playerHand.push_back(deck[deal_num]);
 			// add points
@@ -170,14 +172,45 @@ int main(int argc, char** argv){
 			
 			// deal num increment
 			deal_num ++;
-			// bet doubles
+			// bet doubles, print bet
 			betMoney = betMoney * 2;
+			std::cout << "Betting, " << betMoney << "$" << std::endl;
 			
 			// go to stand
 			user_input = "stand";
 			// std::cout << user_input << std::endl;
 		}
 
-	} while (i != 0);
+		if (user_input == "quit") {
+			run = false;
+			// break;
+		}
+
+	} // while(run) inner while loop
+
+		if (user_input == "quit"){
+			break;
+		}
+
+		if (money == 0) {
+			std::cout << "You went bankrupt, 0$" << std::endl;
+			break;
+		}
+
+		std::cout << "Would you like to play again? Yes or No ->  ";
+		std::getline(std::cin, user_input);		
+		// std::cout << std::endl;
+
+		if (user_input == "No" or user_input == "no"){
+			std::cout << "You ended the game.\nEnding balance: " << money << "$" << std::endl;
+			start = false;
+		}
+		else if (user_input == "Yes" or user_input == "yes"){
+			start = true;
+			// std::cout << "Retype response. Yes or No ->  ";
+			// std::cin >> user_input;
+		}
+
+	} while(start); // outer while loop
 
   } //main
