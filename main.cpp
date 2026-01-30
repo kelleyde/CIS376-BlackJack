@@ -238,7 +238,6 @@ int main(int argc, char** argv){
 		// double bet, take one more card
 		if (user_input == "double down") {
 			ma_engine_play_sound(&engine, "flipcard.mp3", NULL);
-			ma_engine_play_sound(&engine, "flipcard.mp3", NULL);
 			if(betMoney * 2 > money){
 				std::cout << "Not enough money to double down!" << std::endl;
 				continue;
