@@ -4,13 +4,13 @@
 #include <limits>
 // using namespace std;
 
-//Card& deal(int num_cards_dealt){}
 
 int main(int argc, char** argv){
+	// Mr. W's code
 	// Create a deck
-	Deck deck;
+	// Deck deck;
 	// Shuffle the deck (notice the static-method call)
-	Deck::shuffle(deck);
+	// Deck::shuffle(deck);
 	// Auto keyword deduces type for us, so we don't have to.  Here
 	// it is for creating an iterator.
 	// for(auto it = deck.begin(); it != deck.end(); ++it){
@@ -18,20 +18,22 @@ int main(int argc, char** argv){
 	// }
 	// std::cout << std::endl;
 	
-	std::string user_input;
-	unsigned int betMoney; // amount of money user would like to bet - used for validating if betMoney input is an integer
-	int i = 1; // indicates if game is running
-	int money = 100; // amount of money user starts with in game
-	int deal_num = 0; // which card of the deck we are on
+	std::string user_input; // stores user input
+	int money = 100; // amount of money user has in game
+	bool start;
 
-	// Card& first_deal = deck[deal_num];
-	// std::cout << first_deal << std::endl;
-
-	// int card_num = Card::getNumber(first_deal);
-	// std::cout << card_num << std::endl;
-
-	// Start game
+	// outer game loop, start/restart game
+	// int start = true; 
+	do {
 	std::cout << "Start Game" << std::endl;
+	
+	// deck and cards setup
+	Deck deck;
+	Deck::shuffle(deck);
+	int deal_num = 0; // which card of the deck we are on
+	unsigned int betMoney; // amount of money user would like to bet - used for validating if betMoney input is an integer
+
+	// betting
 	std::cout << "How much would you like to bet: ";
 
 	while(!(std::cin >> betMoney)){
@@ -51,8 +53,8 @@ int main(int argc, char** argv){
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Help create vectors https://www.geeksforgeeks.org/cpp/initialize-a-vector-in-cpp-different-ways/
-	std::vector<Card> playerHand = {deck[deal_num], deck[deal_num+1]};
-	std::vector<Card> dealerHand = {deck[deal_num+2], deck[deal_num+3]};
+	std::vector<Card> playerHand = {deck[0], deck[1]};
+	std::vector<Card> dealerHand = {deck[2], deck[3]};
 	int playerPoints = 0;
 	int dealerPoints = 0;
 	deal_num = deal_num + 4; // updates place in deck
@@ -67,46 +69,55 @@ int main(int argc, char** argv){
 	for(auto i : dealerHand){
 		dealerPoints = dealerPoints + Card::getNumber(i);
 	}
-	std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
+	std::cout << "Dealer's Card: " << dealerHand[0] << "\t[Hole Card Hidden]" << std::endl;
 
-	// Game play loop. If player types quit, loop exits.
-	do {
-		if(playerPoints > 21){
-				std::cout << "You Bust, You Lose" << betMoney << "$" << std::endl;
-				money -= betMoney;
+	deal_num = deal_num + 4;
 
-				// resets hands
-				playerPoints = 0;
-				dealerPoints = 0;
-				
-				playerHand = {deck[deal_num+1], deck[deal_num+2]};
-				dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-				
-				std::cout << "Your Points: " << playerPoints << std::endl;
-				std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
-			}
-		
-		std::cout << "Your move: ";
-		// code from https://stackoverflow.com/questions/5838711/stdcin-input-with-spaces
-		// getline allows for spaces to be in the string user_input
-		std::getline(std::cin, user_input);
-		// convert user_input to lowercase
-		// code from https://stackoverflow.com/questions/26202113/how-to-make-case-sensitivity-not-matter-when-inputting-an-answer 
-		for (auto i = user_input.begin(); i < user_input.end(); i ++) {
-			*i = tolower(*i);
+	bool run = true; // run game play loop
+
+	// check for black jack. Points = 21 or Ace and a 10
+	if (playerPoints == 21) {
+		std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+		"\tDealer's Points" << dealerPoints << std::endl;
+		if (dealerPoints == 21) {
+			std::cout << "Double Black Jack Tie" << std::endl;
 		}
+		else {
+			std::cout << "Black Jack! You Win!" << std::endl;
+			money += betMoney;
+		}
+		run = false;
+	}
+
+	if (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1) {
+		if(Card::getNumber(playerHand[0]) == 10 or Card::getNumber(playerHand[1]) == 10) {
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+			"\tDealer's Points" << dealerPoints << std::endl;
+			std::cout << "Black Jack! You Win!" << std::endl;
+			money += betMoney;
+			run = false;
+		}
+	}
+	
+	// Game play loop. If player types quit loop exits.
+	while(run) {
+		// player goes bust
+		if(playerPoints > 21){
+				std::cout << "You Bust, You Lose" << std::endl;
+				money -= betMoney;
+				break;
+			}
 
 		// keep your hand
 		if (user_input == "stand") {
 			//reveal dealer's points, compare who is closer to 21
-			std::cout << "Dealer's Hole Card: " << dealerHand[1] << std::endl;
-			std::cout << "Dealer's Points: " << dealerPoints << std::endl;
+			std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+			"\tDealer's Points: " << dealerPoints << std::endl;
 
 			// dealer game loop
 			while(true){
-
-				// break if dealer points > 17 or dealer points > player points.
-				if(dealerPoints > 17 || dealerPoints > playerPoints) {
+				// break if dealer points > 17 and dealer points > player points.
+				if(dealerPoints > 17 and dealerPoints > playerPoints) {
 					break;
 				}
 
@@ -125,71 +136,50 @@ int main(int argc, char** argv){
 			if(dealerPoints > 21){
 				std::cout << "Dealer Bust, You Win" << std::endl;
 				money += betMoney;
-
-				// resets hands
-				playerPoints = 0;
-				dealerPoints = 0;
-				
-				playerHand = {deck[deal_num+1], deck[deal_num+2]};
-				dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-				
-				std::cout << "Your Points: " << playerPoints << std::endl;
-				std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
+				// go to play again
+				break;
 			}
 			
-			// win loss conditions
-			else {
-				if (playerPoints > dealerPoints) {
-					std::cout << "You Win!" << std::endl;
-					money += betMoney;
-
-					// resets hands
-					playerPoints = 0;
-					dealerPoints = 0;
-					
-					playerHand = {deck[deal_num+1], deck[deal_num+2]};
-					dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-					
-					std::cout << "Your Points: " << playerPoints << std::endl;
-					std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
-					
-				} else if (playerPoints < dealerPoints) {
-					std::cout << "Dealer Wins." << std::endl;
-					money -= betMoney;
-
-					// resets hands
-					playerPoints = 0;
-					dealerPoints = 0;
-					
-					playerHand = {deck[deal_num+1], deck[deal_num+2]};
-					dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-					
-					std::cout << "Your Points: " << playerPoints << std::endl;
-					std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
-
-				} else {
-					std::cout << "It's a Tie." << std::endl;
-
-					// resets hands
-					playerPoints = 0;
-					dealerPoints = 0;
-					
-					playerHand = {deck[deal_num+1], deck[deal_num+2]};
-					dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-					
-					std::cout << "Your Points: " << playerPoints << std::endl;
-					std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
-				}
+			// win loss condition
+			if(dealerPoints > playerPoints){
+				std::cout << "Player Points: " << playerPoints << " < " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "Dealer Wins, You Lose" << std::endl;
+				money -= betMoney;
+				// go to play again
+				break;
 			}
-		}
 
-		if (user_input == "quit") {
-			i = i-1;
+			if(dealerPoints < playerPoints){
+				std::cout << "Player Points: " << playerPoints << " > " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "You Win, Dealer Loses" << std::endl;
+				money += betMoney;
+				// go to play again
+				break;
+			}
+
+			if(dealerPoints == playerPoints){
+				std::cout << "Player Points: " << playerPoints << " = " 
+				<< "Dealer Points: " << dealerPoints << std::endl;
+				std::cout << "Tie" << std::endl;
+				// go to play again
+				break;
+			}
+		} // if (stand)
+
+		std::cout << "Your move: ";
+		// code from https://stackoverflow.com/questions/5838711/stdcin-input-with-spaces
+		// getline allows for spaces to be in the string user_input
+		std::getline(std::cin, user_input);
+		// convert user_input to lowercase
+		// code from https://stackoverflow.com/questions/26202113/how-to-make-case-sensitivity-not-matter-when-inputting-an-answer 
+		for (auto i = user_input.begin(); i < user_input.end(); i ++) {
+			*i = tolower(*i);
 		}
 		
 		// take another card
 		if (user_input == "hit") {
-			// print the card at the top of the Shuffled Deck stack and store the points 
 			// push_back adds to a vector
 			playerHand.push_back(deck[deal_num]);
 			// add points
@@ -209,7 +199,7 @@ int main(int argc, char** argv){
 			}
 
 			betMoney *= 2;
-			std::cout << "Bet doubled" << std::endl;
+			std::cout << "Bet doubled: " << betMoney << "$" << std::endl;
 
 			// take a cards at the top of the deck and double bet
 			playerHand.push_back(deck[deal_num]);
@@ -220,28 +210,44 @@ int main(int argc, char** argv){
 			
 			// deal num increment
 			deal_num ++;
-
-			if(playerPoints > 21){
-				std::cout << "You Bust" << std::endl;
-				betMoney -= money;
-
-				// resets hands
-				playerPoints = 0;
-				dealerPoints = 0;
-				
-				playerHand = {deck[deal_num+1], deck[deal_num+2]};
-				dealerHand = {deck[deal_num+3], deck[deal_num+4]};
-				
-				std::cout << "Your Points: " << playerPoints << std::endl;
-				std::cout << "Dealer's Card: " << dealerHand[0] << "[Hole Card Hidden]" << std::endl;
-			}
 			
 			// go to stand
 			user_input = "stand";
 			// std::cout << user_input << std::endl;
 		}
 
-	} while (i != 0);
+		if (user_input == "quit") {
+			run = false;
+		}
+
+	} // while(run) inner while loop
+
+		if (user_input == "quit"){
+			break;
+		}
+
+		if (money == 0) {
+			std::cout << "You went bankrupt, 0$" << std::endl;
+			break;
+		}
+
+		std::cout << "Balance: " << money << "$" << std::endl;
+		std::cout << "Would you like to play again? Yes or No ->  ";
+		std::getline(std::cin, user_input);		
+
+		if (user_input == "No" or user_input == "no"){
+			std::cout << "You ended the game.\nEnding balance: " << money << "$" << std::endl;
+			start = false;
+		}
+		else if (user_input == "Yes" or user_input == "yes"){
+			start = true;
+		}
+		else {
+			std::cout << "Retype response. Yes or No ->  ";
+			std::getline(std::cin, user_input);	
+		}
+
+	} while(start); // outer while loop
 
 	return 0;
   } //main
