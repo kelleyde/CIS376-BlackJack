@@ -2,6 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
 // using namespace std;
 
 
@@ -17,6 +20,24 @@ int main(int argc, char** argv){
 	// 	std::cout << *it << "\t";
 	// }
 	// std::cout << std::endl;
+
+	ma_result result;
+	ma_engine engine;
+	ma_sound sound;
+
+	result = ma_engine_init(NULL, &engine);
+	if(result != MA_SUCCESS){
+		std::cout << "Failed to initialize" << std::endl;
+	}
+
+	result = ma_sound_init_from_file(&engine, "blackjackBackgroundMusic.mp3", MA_SOUND_FLAG_STREAM, NULL, NULL, &sound);
+	if(result != MA_SUCCESS){
+		std::cout << "Failed to load sound" << std::endl;
+	}
+
+	ma_sound_set_looping(&sound, MA_TRUE);
+	ma_sound_start(&sound);
+	ma_sound_set_volume(&sound, 0.5);
 	
 	std::string user_input; // stores user input
 	int money = 100; // amount of money user has in game
@@ -26,6 +47,7 @@ int main(int argc, char** argv){
 	// int start = true; 
 	do {
 	std::cout << "Start Game" << std::endl;
+	ma_engine_play_sound(&engine, "shuffle.mp3", NULL);
 	
 	// deck and cards setup
 	Deck deck;
@@ -81,10 +103,13 @@ int main(int argc, char** argv){
 		"\tDealer's Points" << dealerPoints << std::endl;
 		if (dealerPoints == 21) {
 			std::cout << "Double Black Jack Tie" << std::endl;
+			ma_engine_play_sound(&engine, "youTie.mp3", NULL);
+			ma_engine_set_volume(&engine, 0.7);
 		}
 		else {
 			std::cout << "Black Jack! You Win!" << std::endl;
 			money += betMoney;
+			ma_engine_play_sound(&engine, "youWin.mp3", NULL);
 		}
 		run = false;
 	}
@@ -95,6 +120,9 @@ int main(int argc, char** argv){
 			"\tDealer's Points" << dealerPoints << std::endl;
 			std::cout << "Black Jack! You Win!" << std::endl;
 			money += betMoney;
+
+			ma_engine_play_sound(&engine, "youWin.mp3", NULL);
+
 			run = false;
 		}
 	}
@@ -105,6 +133,9 @@ int main(int argc, char** argv){
 		if(playerPoints > 21){
 				std::cout << "You Bust, You Lose" << std::endl;
 				money -= betMoney;
+
+				ma_engine_play_sound(&engine, "youLose.mp3", NULL);
+
 				break;
 			}
 
@@ -136,6 +167,9 @@ int main(int argc, char** argv){
 			if(dealerPoints > 21){
 				std::cout << "Dealer Bust, You Win" << std::endl;
 				money += betMoney;
+
+				ma_engine_play_sound(&engine, "youWin.mp3", NULL);
+
 				// go to play again
 				break;
 			}
@@ -146,6 +180,9 @@ int main(int argc, char** argv){
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "Dealer Wins, You Lose" << std::endl;
 				money -= betMoney;
+				
+				ma_engine_play_sound(&engine, "youLose.mp3", NULL);
+
 				// go to play again
 				break;
 			}
@@ -155,6 +192,9 @@ int main(int argc, char** argv){
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "You Win, Dealer Loses" << std::endl;
 				money += betMoney;
+
+				ma_engine_play_sound(&engine, "youWin.mp3", NULL);
+
 				// go to play again
 				break;
 			}
@@ -163,6 +203,9 @@ int main(int argc, char** argv){
 				std::cout << "Player Points: " << playerPoints << " = " 
 				<< "Dealer Points: " << dealerPoints << std::endl;
 				std::cout << "Tie" << std::endl;
+
+				ma_engine_play_sound(&engine, "youTie.mp3", NULL);
+
 				// go to play again
 				break;
 			}
@@ -180,6 +223,7 @@ int main(int argc, char** argv){
 		
 		// take another card
 		if (user_input == "hit") {
+			ma_engine_play_sound(&engine, "flipcard.mp3", NULL);
 			// push_back adds to a vector
 			playerHand.push_back(deck[deal_num]);
 			// add points
@@ -193,6 +237,7 @@ int main(int argc, char** argv){
 
 		// double bet, take one more card
 		if (user_input == "double down") {
+			ma_engine_play_sound(&engine, "flipcard.mp3", NULL);
 			if(betMoney * 2 > money){
 				std::cout << "Not enough money to double down!" << std::endl;
 				continue;
@@ -248,6 +293,9 @@ int main(int argc, char** argv){
 		}
 
 	} while(start); // outer while loop
+
+	ma_sound_uninit(&sound);
+	ma_engine_uninit(&engine);
 
 	return 0;
   } //main
