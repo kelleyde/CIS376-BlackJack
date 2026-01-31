@@ -116,7 +116,7 @@ int main(int argc, char** argv){
 	if ( playerPoints == 11 and (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1)) {
 		std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
 		"\tDealer's Points" << dealerPoints << std::endl;
-		if( dealerPoints == 11 and (Card::getNumber(dealerHand[0]) == 1 or Card::getNumber(dealer[1]) == 1)) {
+		if( dealerPoints == 11 and (Card::getNumber(dealerHand[0]) == 1 or Card::getNumber(dealerHand[1]) == 1)) {
 			std::cout << "Double Black Jack Tie" << std::endl;
 			ma_engine_play_sound(&engine, "youTie.mp3", NULL);
 			ma_engine_set_volume(&engine, 0.7);
