@@ -5,7 +5,6 @@
 
 #define MINIAUDIO_IMPLEMENTATION
 #include "miniaudio.h"
-// using namespace std;
 
 
 int main(int argc, char** argv){
@@ -114,17 +113,22 @@ int main(int argc, char** argv){
 		run = false;
 	}
 
-	if (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1) {
-		if(Card::getNumber(playerHand[0]) == 10 or Card::getNumber(playerHand[1]) == 10) {
-			std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
-			"\tDealer's Points" << dealerPoints << std::endl;
-			std::cout << "Black Jack! You Win!" << std::endl;
-			money += betMoney;
-
+	if ( playerPoints == 11 and (Card::getNumber(playerHand[0]) == 1 or Card::getNumber(playerHand[1]) == 1)) {
+		std::cout << "Dealer's Hole Card: " << dealerHand[1] << 
+		"\tDealer's Points" << dealerPoints << std::endl;
+		if( dealerPoints == 11 and (Card::getNumber(dealerHand[0]) == 1 or Card::getNumber(dealer[1]) == 1)) {
+			std::cout << "Double Black Jack Tie" << std::endl;
+			ma_engine_play_sound(&engine, "youTie.mp3", NULL);
+			ma_engine_set_volume(&engine, 0.7);
 			ma_engine_play_sound(&engine, "youWin.mp3", NULL);
 
-			run = false;
 		}
+		else {
+			std::cout << "Black Jack! You Win!" << std::endl;
+			money += betMoney;
+			ma_engine_play_sound(&engine, "youWin.mp3", NULL);
+		}
+		run = false;
 	}
 	
 	// Game play loop. If player types quit loop exits.
@@ -299,3 +303,4 @@ int main(int argc, char** argv){
 
 	return 0;
   } //main
+
